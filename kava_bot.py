@@ -22,8 +22,6 @@ def main_menu():
             [InlineKeyboardButton("Коляски", callback_data="menu_strollers")],
             [InlineKeyboardButton("Качели", callback_data="menu_swings")],
             [InlineKeyboardButton("Весы и шезлонг", callback_data="menu_scales")],
-            [InlineKeyboardButton("📞 WhatsApp", url=PHONE_LINK)],
-            [InlineKeyboardButton("📷 Instagram", url=INSTAGRAM_LINK)],
         ]
     )
 
@@ -76,5 +74,6 @@ def main():
 
 if  __name__ == "__main__":
     main()
+
 
 
