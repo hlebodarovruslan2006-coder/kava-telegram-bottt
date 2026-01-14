@@ -17,13 +17,15 @@ PORT = int(os.environ.get("PORT", 10000))
 WEBHOOK_URL = os.environ.get("RENDER_EXTERNAL_URL")
 
 def main_menu():
-    return InlineKeyboardMarkup([
-        [InlineKeyboardButton("Коляски", callback_data="menu_strollers")],
-        [InlineKeyboardButton("Качели", callback_data="menu_swings")],
-        [InlineKeyboardButton("Весы и шезлонг", callback_data="menu_scales")],
-        [InlineKeyboardButton("📞 WhatsApp", url=PHONE_LINK)],
-        [InlineKeyboardButton("📷 Instagram", url=INSTAGRAM_LINK)],
-    ])
+    return InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton("Коляски", callback_data="menu_strollers")],
+            [InlineKeyboardButton("Качели", callback_data="menu_swings")],
+            [InlineKeyboardButton("Весы и шезлонг", callback_data="menu_scales")],
+            [InlineKeyboardButton("📞 WhatsApp", url=PHONE_LINK)],
+            [InlineKeyboardButton("📷 Instagram", url=INSTAGRAM_LINK)],
+        ]
+    )
 
 strollers_menu = InlineKeyboardMarkup([
     [InlineKeyboardButton("BABALO — 1300/2700", callback_data="order_BABALO")],
@@ -74,3 +76,4 @@ def main():
 
 if  __name__ == "__main__":
     main()
+
