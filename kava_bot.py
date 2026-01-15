@@ -3,7 +3,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
 # --- Настройки ---
-TOKEN = os.getenv("TOKEN")  # токен из Environment Variables
+TOKEN = os.getenv("TOKEN")  # используем Environment Variable
 ADMIN_CHAT_ID = 687268108
 
 # --- Меню и подменю ---
@@ -62,7 +62,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def main():
     if not TOKEN:
         raise RuntimeError("TOKEN not found in environment variables")
-    
+
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button))
