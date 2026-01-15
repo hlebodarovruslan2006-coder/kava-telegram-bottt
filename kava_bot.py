@@ -10,9 +10,6 @@ from telegram.ext import (
 TOKEN = os.getenv("TOKEN")
 ADMIN_CHAT_ID = 687268108
 
-PHONE_LINK = "https://wa.me/79516382727"
-INSTAGRAM_LINK = "https://www.instagram.com/kavakids03"
-
 PORT = int(os.environ.get("PORT", 10000))
 WEBHOOK_URL = os.environ.get("RENDER_EXTERNAL_URL")
 
@@ -74,6 +71,7 @@ def main():
 
 if  __name__ == "__main__":
     main()
+
 
 
 
