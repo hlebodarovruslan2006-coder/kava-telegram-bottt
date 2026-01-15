@@ -3,7 +3,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
 # --- Настройки ---
-TOKEN = os.getenv("TOKEN")  # используем Environment Variable
+TOKEN = os.getenv("TOKEN") 
 ADMIN_CHAT_ID = 687268108
 
 # --- Меню и подменю ---
@@ -70,3 +70,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
