@@ -1,18 +1,12 @@
 import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import (
-    ApplicationBuilder,
-    CommandHandler,
-    CallbackQueryHandler,
-    ContextTypes,
-)
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
-TOKEN = os.getenv("TOKEN")
+# --- Настройки ---
+TOKEN = os.getenv("TOKEN")  # токен из Environment Variables
 ADMIN_CHAT_ID = 687268108
 
-PORT = int(os.environ.get("PORT", 10000))
-WEBHOOK_URL = os.environ.get("RENDER_EXTERNAL_URL")
-
+# --- Меню и подменю ---
 def main_menu():
     return InlineKeyboardMarkup(
         [
@@ -23,55 +17,56 @@ def main_menu():
     )
 
 strollers_menu = InlineKeyboardMarkup([
-    [InlineKeyboardButton("BABALO — 1300/2700", callback_data="order_BABALO")],
-    [InlineKeyboardButton("⬅️ Назад", callback_data="back")],
+    [InlineKeyboardButton("BABALO 1300/2700₽", callback_data='order_BABALO')],
+    [InlineKeyboardButton("Назад", callback_data='back_main')]
 ])
 
+swings_menu = InlineKeyboardMarkup([
+    [InlineKeyboardButton("AMAROBABY 1000/1600₽", callback_data='order_AMAROBABY')],
+    [InlineKeyboardButton("4MOMS 1500/3000₽", callback_data='order_4MOMS')],
+    [InlineKeyboardButton("BABYTON 700/1400₽", callback_data='order_BABYTON')],
+    [InlineKeyboardButton("Назад", callback_data='back_main')]
+])
+
+scales_menu = InlineKeyboardMarkup([
+    [InlineKeyboardButton("ВЕСЫ B1-15-САША 600/1300₽", callback_data='order_ВЕСЫ')],
+    [InlineKeyboardButton("ШЕЗЛОНГ 700/1400₽", callback_data='order_ШЕЗЛОНГ')],
+    [InlineKeyboardButton("Назад", callback_data='back_main')]
+])
+
+# --- Функции ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "Добро пожаловать в KAVA 👶\nВыберите категорию:",
-        reply_markup=main_menu()
-    )
+    reply_markup = main_menu()
+    await update.message.reply_text("Выберите категорию:", reply_markup=reply_markup)
 
-async def buttons(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    q = update.callback_query
-    await q.answer()
+async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    data = query.data
 
-    if q.data == "menu_strollers":
-        await q.edit_message_text("Выберите коляску:", reply_markup=strollers_menu)
+    if data == "menu_strollers":
+        await query.edit_message_text("Выберите модель коляски:", reply_markup=strollers_menu)
+    elif data == "menu_swings":
+        await query.edit_message_text("Выберите модель качели:", reply_markup=swings_menu)
+    elif data == "menu_scales":
+        await query.edit_message_text("Выберите модель весов:", reply_markup=scales_menu)
+    elif data.startswith("order_"):
+        user = query.from_user
+        order_text = f"🛒 Новый заказ от @{user.username or user.first_name}:\n{data.replace('order_', '').replace('_', ' ')}"
+        await context.bot.send_message(chat_id=ADMIN_CHAT_ID, text=order_text)
+        await query.edit_message_text(f"Вы выбрали {data.replace('order_', '').replace('_', ' ')}. Менеджер свяжется с вами!")
+    elif data == "back_main":
+        await query.edit_message_text("Вы вернулись в главное меню:", reply_markup=main_menu())
 
-    elif q.data.startswith("order_"):
-        product = q.data.replace("order_", "")
-        user = q.from_user
-
-        await context.bot.send_message(
-            chat_id=ADMIN_CHAT_ID,
-            text=f"🛒 Новый заказ\nОт: @{user.username or user.first_name}\nТовар: {product}"
-        )
-
-        await q.edit_message_text(
-            f"✅ Вы выбрали: {product}\nМы скоро свяжемся с вами.",
-            reply_markup=main_menu()
-        )
-
-    elif q.data == "back":
-        await q.edit_message_text("Главное меню:", reply_markup=main_menu())
-
+# --- Основная логика ---
 def main():
+    if not TOKEN:
+        raise RuntimeError("TOKEN not found in environment variables")
+    
     app = ApplicationBuilder().token(TOKEN).build()
-
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(buttons))
+    app.add_handler(CallbackQueryHandler(button))
+    app.run_polling()
 
-    app.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        webhook_url=f"{WEBHOOK_URL}/{TOKEN}",
-    )
-
-if  __name__ == "__main__":
+if __name__ == "__main__":
     main()
-
-
-
-
